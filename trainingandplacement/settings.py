@@ -34,7 +34,9 @@ SECRET_KEY = 'f)t7)&g)7ew0csr9-j+vocbq30n8@o6l5jv_661&z1t7aig4#&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['34.236.101.243','ec2-34-236-101-243.compute-1.amazonaws.com','tnpcell.ml']
 
 #LOGOUT_REDIRECT_URL = 'login'
 # Application definition
