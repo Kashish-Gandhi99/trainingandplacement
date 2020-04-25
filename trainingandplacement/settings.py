@@ -34,9 +34,9 @@ SECRET_KEY = 'f)t7)&g)7ew0csr9-j+vocbq30n8@o6l5jv_661&z1t7aig4#&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
 
-ALLOWED_HOSTS = ['34.236.101.243','ec2-34-236-101-243.compute-1.amazonaws.com','tnpcell.ml']
+#ALLOWED_HOSTS = ['34.236.101.243','ec2-34-236-101-243.compute-1.amazonaws.com','tnpcell.ml']
 
 #LOGOUT_REDIRECT_URL = 'login'
 # Application definition
@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'trainingandplacement.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -104,20 +104,6 @@ DATABASES = {
 
     }
 }
-'''
-DATABASES = {
-'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'tnp',
-    'USER': 'postgres',
-    'PASSWORD': '12345678',
-    'HOST': 'qwerty54321.clnris2ddb2e.us-east-1.rds.amazonaws.com',
-    'PORT': '5432',
-    }
-	}
-
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 

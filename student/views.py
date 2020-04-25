@@ -597,7 +597,7 @@ def enterplacementdetails(request):
                     obj.save()                        
                     obj1.filleddetails=True
                     obj1.save()
-                    return redirect('student')
+                    return redirect('login')
                 except Exception as e:
                     return HttpResponse("<html><body><br/>"+e+"<br/></body></html>")
             else:        

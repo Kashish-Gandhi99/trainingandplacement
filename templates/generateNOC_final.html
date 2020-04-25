@@ -92,7 +92,7 @@
     <form method="POST">
         {% csrf_token %}
         <input type="hidden" name= "encode_company" value={{encode_company}}>
-    <center><input type="submit" value="Download" name="submit">&nbsp;&nbsp;&nbsp;<input type="submit" value="Home" name="submit"></center>
+    <center><a href="{% url 'openNOC' %}">Download</a>    
     </form>
 </td>
 </table>

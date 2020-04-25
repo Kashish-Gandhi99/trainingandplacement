@@ -126,9 +126,15 @@
       }
          
 </script>
-
+{% if placedflag %}
 <section>
- 
+</section>
+<h2>{{ message2 }}
+{{ message3 }}
+</h2>
+</section>
+{% else %}
+<section>
     <h2>Congratulation, You have been selected in below mentioned Companies. </h2><h3>Select Any one for NOC generation:</h3>
     <span style="color: red;">{{message}}</span>
     <!--for demo wrap-->
@@ -150,10 +156,12 @@
     <div class="tbl-content">
         <table id="both" cellpadding="0" cellspacing="0" border="0">
             <tbody>
+                <!--
                <tr>
                 <td><a href="{%url 'generateNOC_Next' opportunity='self_applied_company' %}">Self Applied Company</a>
                 </td>
                 </tr>
+                -->
                 {% for opportunity in opportunities %}
                 <tr>
                     <td><a href="{%url 'generateNOC_Next' opportunity=opportunity.encode_company %}">{{opportunity.companyname}}</a></td>
@@ -177,5 +185,5 @@
     </div>
 <span style="padding: 15px; color: red;font-size: 14px;">None Represent Internship Only Opportunities</span><br/>
 <span style="padding: 15px; color: red;font-size: 14px;">Placement and Internship Opportunity will have all details</span>
-</section>
+{% endif %}
 {%endblock%}

@@ -7,6 +7,9 @@ from . import views
    
 urlpatterns = [
    path('showpassedopportunity',views.showpassedopportunity,name='showpassedopportunity'),
+   path('openNOC',views.openNOC,name = 'openNOC'),
+   path('openOL',views.openOL,name = 'openOL'),
+   path('viewprofile',views.viewprofile,name='viewprofile'),
    path('uploadofferletter',views.uploadofferletter,name='uploadofferletter'),
    path('takeopportunity/<str:opportunity>',views.takeopportunity,name = 'takeopportunity'),
    path('generateNOC',views.generateNOC, name = 'generateNOC'),

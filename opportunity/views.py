@@ -30,9 +30,16 @@ import base64
 from django.db.models import Q
 import shutil
 import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from django.views.generic import View
 
+
+@login_required
+def viewprofile(request):
+    userid = request.session.get("uid")
+    obj = model_to_dict(details.objects.get(enrollmentno=userid))
+    print(obj)
+    return render(request,'viewprofile.html',{"details":obj}) 
 
 @login_required
 def showpassedopportunity(request):
@@ -270,12 +277,36 @@ def generateNOC_Next(request,opportunity):
         return redirect('/login')
 
 @login_required
+def openOL(request):
+    if request.session.has_key("uid") and request.session.get("uid")!=None:
+        userid = request.session.get("uid")        
+        try:
+            return FileResponse(open('C:/Users/admin/project/trainingandplacement/media/offerletters/'+str(userid)+'offerletter.pdf', 'rb'), content_type='application/pdf')
+        except FileNotFoundError:
+            return render(request,"notapplicable.html")
+    else:    
+        return redirect('/login')
+
+
+@login_required
+def openNOC(request):
+    if request.session.has_key("uid") and request.session.get("uid")!=None:
+        userid = request.session.get("uid")        
+        try:
+            return FileResponse(open('C:/Users/admin/project/trainingandplacement/media/noc/NOC'+str(userid)+'.pdf', 'rb'), content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404() 
+    else:    
+        return redirect('/login')
+@login_required
 def generateNOC_final(request,opportunity):
-    if request.POST:
-        if request.POST.get('submit')=="Home": 
+    if 1==0:
+        if 1==0:
             return redirect('/login')
-        elif request.POST.get('submit')=="Download":
-            flag_go_back = "False"
+        elif 1==0:
+           return None             
+    else:  
+        if request.session.has_key("uid") and request.session.get("uid")!=None:
             userid = request.session.get("uid")
             companyobj = finalresults.objects.filter(Q(enrollmentno=userid)&Q(encode_company=opportunity))
             company_name = error = None
@@ -286,7 +317,7 @@ def generateNOC_final(request,opportunity):
             else:    
                 for company in companyobj:
                     company_name =  company.companyname
-                    name = company.firstname + " " +company.lastname        
+                    name = str(company.firstname) + " " + str(company.lastname )       
                     stipend = company.stipend
                     package = company.package
                     bondterm = company.bondterm
@@ -373,11 +404,7 @@ def generateNOC_final(request,opportunity):
                 studentplacedDetails.objects.create(enrollmentno=userid,firstname=str(name[0]),lastname=str(name[1]),companyname=company_name,package=package,bondterm = bondterm,encode_company=encode_company,typeofjob=job_role)
                 
             studentobject.save()
-            return FileResponse(buffer, as_attachment=True, filename="C:/Users/admin/project/trainingandplacement/media/noc/NOC"+str(userid)+".pdf")
             
-    else:  
-        flag_go_back = True  
-        if request.session.has_key("uid") and request.session.get("uid")!=None:
             userid = request.session.get("uid")
             userobj = completeddetails.objects.get(enrollmentno=userid)
             if userobj.internshipselected:
@@ -416,11 +443,19 @@ def generateNOC_final(request,opportunity):
                 else:    
                     for company in companyobj:
                         company_name =  company.companyname
-                        name = company.firstname + " " +company.lastname        
+                        name = str(company.firstname) + " " + str(company.lastname)
                         fname = company.firstname
                         lname = company.lastname        
                         encode_company = company.encode_company
                     return render(request,'generateNOC_final.html',{"company":company_name,"student_name":name,"error":error,"flag":flag,"encode_company":encode_company})
+
+@login_required
+def openofferletter(request,student):
+    try:
+        return FileResponse(open('C:/Users/admin/project/trainingandplacement/media/offerletters/'+student+'offerletter.pdf', 'rb'), content_type='application/pdf')
+    except FileNotFoundError:
+        raise Http404() 
+
 
 @login_required
 def uploadofferletter(request):
@@ -538,73 +573,3 @@ def uploadofferletter(request):
                     flag  = "True"
                     return render(request,'offeruploadform.html',{"error":error,"flag":flag,"Not_Show":True})
                 
-'''
-@login_required
-def uploadofferletter_(request,opportunity):
-    if request.POST:
-        userid = request.session.get("uid")
-        try:
-            role = request.POST.get('role')
-            sal = request.POST.get('sal')
-            bondterm = request.POST.get('bondterm')
-            studentplacedDetailsobjs = finalresults.objects.filter(Q(enrollmentno=userid)&(Q(encode_company=opportunity)))
-            for studentplacedDetailsobj in studentplacedDetailsobjs:            
-                encode_company = studentplacedDetailsobj.encode_company
-                if role is not None and role != studentplacedDetailsobj.typeofjob:     
-                    studentplacedDetailsobj.typeofjob = role
-                if sal is not None and sal != studentplacedDetailsobj.package:    
-                    studentplacedDetailsobj.package = sal
-                if bondterm is not None and studentplacedDetailsobj.bondterm != bondterm:    
-                    studentplacedDetailsobj.bondterm = bondterm
-
-        
-            offletter = request.FILES['letter']                
-            ext_offerletter = offletter.name.split('.')[-1]
-            filename_offerletter = "%s.%s" % (str(userid)+"offerletter", ext_offerletter)
-            dir_path = "C:/Users/admin/project/trainingandplacement/media"
-            doc_path = "/offerletters/"
-            with open(dir_path + doc_path + filename_offerletter,'wb') as f:
-                shutil.copyfileobj(offletter,f)
-                        
-            studentobject = completeddetails.objects.get(enrollmentno=userid)
-            studentdetail = details.objects.get(enrollmentno=userid)
-            studentobject.placementselected = True
-            try:
-                studentplaced = studentplacedDetails.objects.studentplacedDetails.objects.get(enrollmentno=userid,firstname=studentdetail.firstname,lastname=studentdetail.lastname,companyname=request.session.get("company_name"),package=sal,bondterm = bondterm,encode_company=encode_company,typeofjob=role)
-            except:
-                studentplaced = studentplacedDetails.objects.studentplacedDetails.objects.get(enrollmentno=userid,firstname=studentdetail.firstname,lastname=studentdetail.lastname,companyname=request.session.get("company_name"),package=sal,bondterm = bondterm,encode_company=encode_company,typeofjob=role)
-            studentobject.OfferLetterNotSubmitted = False
-            studentobject.reuploadofferletter = False
-            studentobject.OfferLetterVerified = False
-            studentobject.OfferLetterComment is None
-            studentobject.OfferLetter = dir_path + doc_path + filename_offerletter
-            studentobject.save()
-            studentplacedDetailsobj.save()
-            error = "Offer letter Upload Successful"
-            flag  = "True"
-            return render(request,'offeruploadform.html',{"error":error,"flag":flag,"Not_Show":True})
-        except Exception as e :
-            print(e)
-            error = "Invalid" + str(e)
-            flag  = "True"
-            return render(request,'offeruploadform.html',{"error":error,"flag":flag})
-    else:    
-        if request.session.has_key("uid") and request.session.get("uid")!=None:
-            userid = request.session.get("uid")
-            userobj = completeddetails.objects.get(enrollmentno=userid)
-            studentplacedDetailsobj = finalresults.objects.filter(Q(enrollmentno=userid)&(Q(encode_company=opportunity)))
-            if len(studentplacedDetailsobj)!=0:
-                for student in studentplacedDetailsobj:                                  
-                    company_name =  student.companyname
-                    request.session["company_name"]= company_name
-                    job_role = student.typeofjob
-                    package =  student.package
-                    bond = student.bondterm
-                    encode_company = student.encode_company
-                    flag  = "True"
-                return render(request,'offeruploadform.html',{"company": company_name,"stipend":None,"role":job_role,"package":package,"bond":bond,"opp":encode_company,"flag":flag,"new_flag":True})
-            else:
-                error = "Invalid" + str(e)
-                flag  = "True"
-                return render(request,'offeruploadform.html',{"error":error,"flag":flag})
-'''             
