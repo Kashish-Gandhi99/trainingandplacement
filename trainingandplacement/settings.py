@@ -17,8 +17,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'healthplusict@gmail.com'
-EMAIL_HOST_PASSWORD = 'hkljttgvohoslcbf'
+#EMAIL_HOST_USER = 'Enter your admin email'
+#EMAIL_HOST_PASSWORD = 'Enter your password'
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
